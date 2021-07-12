@@ -17,6 +17,7 @@ dns:
       zone: "{{ ip_address.split('.')[2] }}.15.10.in-addr.arpa."
       type: PTR
       value: "{{ inventory_hostname }}."
+    - "{{ hana_vip if defined }}"
 
 config_files:
   - hosts
