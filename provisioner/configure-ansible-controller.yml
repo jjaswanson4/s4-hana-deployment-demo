@@ -7,7 +7,7 @@
   vars:
     ansible_connection: local
   vars_files:
-    - vars/tower-configuration.yml
+    - vars/ansible-controller-configuration.yml
   roles:
     - redhat_cop.tower_configuration.credentials
     - redhat_cop.tower_configuration.organizations
