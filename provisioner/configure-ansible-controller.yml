@@ -1,0 +1,16 @@
+---
+
+- name: load configuration into ansible controller
+  hosts:
+    - localhost
+  gather_facts: false
+  vars:
+    ansible_connection: local
+  vars_files:
+    - vars/tower-configuration.yml
+  roles:
+    - redhat_cop.tower_configuration.credentials
+    - redhat_cop.tower_configuration.organizations
+    - redhat_cop.tower_configuration.users
+    - redhat_cop.tower_configuration.teams
+    - redhat_cop.tower_configuration.tower_role
