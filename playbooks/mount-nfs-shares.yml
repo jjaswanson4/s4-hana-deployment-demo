@@ -1,0 +1,7 @@
+---
+
+- name: mount nfs shares to server
+  hosts:
+    - all
+  roles:
+    - jjaswanson4.utilities.mount_nfs_shares
