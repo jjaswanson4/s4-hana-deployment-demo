@@ -1,0 +1,4 @@
+---
+
+ansible_host: 10.15.120.40
+ip_address: "{{ ansible_host }}"
