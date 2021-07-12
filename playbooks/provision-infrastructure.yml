@@ -1,0 +1,8 @@
+---
+
+- name: provision infrastructure
+  hosts:
+    - all
+  gather_facts: no
+  roles:
+    - jjaswanson4.utilities.provision_via_satellite
