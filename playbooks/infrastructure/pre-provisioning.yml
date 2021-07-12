@@ -3,5 +3,6 @@
 - name: run pre-infrastructure provisioning tasks
   hosts:
     - all
+  gather_facts: no
   roles:
     - jjaswanson4.utilities.idm_dns_records
