@@ -21,7 +21,7 @@ sap_s4hana_deployment_sid: "DS4"
 sap_s4hana_deployment_db_host: "sapddhdb.josh.lab.msp.redhat.com"
 sap_s4hana_deployment_db_sid: "DS4"
 
-hana_vip:
+custom_dns_records:
   - name: "{{ sap_s4hana_deployment_db_host.split('.')[0] }}"
     zone: josh.lab.msp.redhat.com
     type: A
