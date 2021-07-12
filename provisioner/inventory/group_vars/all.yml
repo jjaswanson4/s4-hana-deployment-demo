@@ -3,6 +3,8 @@
 ansible_user: root
 ansible_become: false
 
+manage_lvm: no
+
 dns_zone: josh.lab.msp.redhat.com
 
 dns:
