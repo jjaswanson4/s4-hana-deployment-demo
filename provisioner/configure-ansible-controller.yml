@@ -37,6 +37,8 @@
     - redhat_cop.tower_configuration.teams
     - redhat_cop.tower_configuration.projects
     - redhat_cop.tower_configuration.inventories
+    - redhat_cop.tower_configuration.hosts
+    - redhat_cop.tower_configuration.groups
     - redhat_cop.tower_configuration.job_templates
     - redhat_cop.tower_configuration.workflow_job_templates
     - redhat_cop.tower_configuration.tower_role
