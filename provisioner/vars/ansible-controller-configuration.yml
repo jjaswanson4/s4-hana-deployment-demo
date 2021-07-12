@@ -114,6 +114,7 @@ tower_workflows:
         identifier: node103
 
 tower_rbac:
+  # Team Membership
   - user: basis_user
     target_team: BASIS (Application Team)
     organization: SAP S4 HANA Deployment Demo
@@ -122,6 +123,7 @@ tower_rbac:
     target_team: Infrastructure
     organization: SAP S4 HANA Deployment Demo
     role: member
+  # Infrastructure Team Permissions
   - team: Infrastructure
     role: admin
     inventory: SAP S4 HANA Deployment Demo
@@ -139,4 +141,24 @@ tower_rbac:
     job_template: Post-Provisioning Tasks
   - team: Infrastructure
     role: admin
+    job_template: Manage NFS Shares
+  - team: Infrastructure
+    role: admin
+    job_template: Manage Local Storage
+  - team: Infrastructure
+    role: admin
     workflow: Provision Infrastructure
+  # BASIS (Application Team) Permissions
+  - team: BASIS (Application Team)
+    role: read
+    inventory: SAP S4 HANA Deployment Demo
+  - team: BASIS (Application Team)
+    role: admin
+    project: SAP S4 HANA Deployment Demo
+  - team: BASIS (Application Team)
+    role: execute
+    job_template: Manage NFS Shares
+  - team: BASIS (Application Team)
+    role: execute
+    job_template: Manage Local Storage
+  
