@@ -1,0 +1,12 @@
+---
+
+roles:
+  - name: redhat_sap.sap_hostagent
+#    source: https://galaxy.ansible.com
+#    version: v1.2.0
+  - src: https://github.com/linux-system-roles/sap-preconfigure.git
+#    version: v1.0
+  - src: https://github.com/linux-system-roles/sap-hana-preconfigure.git
+#    version: v1.0
+  - src: https://github.com/linux-system-roles/sap-netweaver-preconfigure.git
+#    version: v1.0
