@@ -65,8 +65,46 @@ tower_inventories:
     organization: SAP S4 HANA Deployment Demo
     variables: "{{ lookup('file', 'inventory/group_vars/all.yml') | from_yaml }}"
 
+tower_hosts:
+  - name: sapddapp1.josh.lab.msp.redhat.com
+    inventory: SAP S4 HANA Deployment Demo
+    variables: "{{ lookup('file', 'inventory/host_vars/sapddapp1.josh.lab.msp.redhat.com.yml') | from_yaml }}"
+  - name: sapddhdb1.josh.lab.msp.redhat.com
+    inventory: SAP S4 HANA Deployment Demo
+    variables: "{{ lookup('file', 'inventory/host_vars/sapddhdb1.josh.lab.msp.redhat.com.yml') | from_yaml }}"
+  - name: sapddhdb2.josh.lab.msp.redhat.com
+    inventory: SAP S4 HANA Deployment Demo
+    variables: "{{ lookup('file', 'inventory/host_vars/sapddhdb2.josh.lab.msp.redhat.com.yml') | from_yaml }}"
+
+tower_groups:
+  - name: hana
+    inventory: SAP S4 HANA Deployment Demo
+    hosts:
+      - sapddhdb1.josh.lab.msp.redhat.com
+      - sapddhdb2.josh.lab.msp.redhat.com
+    variables: "{{ lookup('file', 'inventory/group_vars/hana.yml') | from_yaml }}"
+  - name: s4
+    inventory: SAP S4 HANA Deployment Demo
+    hosts:
+      - sapddapp1.josh.lab.msp.redhat.com
+    variables: "{{ lookup('file', 'inventory/group_vars/s4.yml') | from_yaml }}"
+  - name: development
+    inventory: SAP S4 HANA Deployment Demo
+    hosts:
+      - sapddapp1.josh.lab.msp.redhat.com
+      - sapddhdb1.josh.lab.msp.redhat.com
+      - sapddhdb2.josh.lab.msp.redhat.com
+    variables: "{{ lookup('file', 'inventory/group_vars/development.yml') | from_yaml }}"
+  - name: sap
+    inventory: SAP S4 HANA Deployment Demo
+    children:
+      - hana
+      - s4
+      - development
+    variables: "{{ lookup('file', 'inventory/group_vars/sap.yml') | from_yaml }}"
+
 tower_templates:
-  # Infrastructure Team Automation
+  # Infrastructure Team Job Templates
   - name: Pre-Provisioning Tasks
     inventory: SAP S4 HANA Deployment Demo
     project: SAP S4 HANA Deployment Demo
@@ -94,13 +132,21 @@ tower_templates:
     project: SAP S4 HANA Deployment Demo
     playbook: playbooks/infrastructure/manage-nfs-shares.yml
     credentials:
-      - SAP Systems Root Account     
+      - SAP Systems Root Account
+  # BASIS (Application Team) Job Templates
+  - name: SAP Preconfigure Tasks
+    inventory: SAP S4 HANA Deployment Demo
+    project: SAP S4 HANA Deployment Demo
+    playbook: playbooks/infrastructure/manage-nfs-shares.yml
+    credentials:
+      - SAP Systems Root Account 
 
 tower_workflows:
   # Infrastructure Team Workflows
   - name: Provision Infrastructure
     inventory: SAP S4 HANA Deployment Demo
     organization: SAP S4 HANA Deployment Demo
+    extra_vars: "{{ lookup('file', 'extra-vars.yml') | from_yaml }}"
     simplified_workflow_nodes:
       - unified_job_template: Pre-Provisioning Tasks
         identifier: node101
@@ -164,4 +210,7 @@ tower_rbac:
   - team: BASIS (Application Team)
     role: execute
     job_template: Manage Local Storage
+  - team: BASIS (Application Team)
+    role: execute
+    workflow: Provision Infrastructure
   
