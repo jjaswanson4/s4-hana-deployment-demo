@@ -1,0 +1,15 @@
+---
+
+- name: manage custom DNS records
+  hosts:
+    - all
+  gather_facts: no
+  pre_tasks:
+    - name: map dns records to expected var
+      ansible.builtin.set_fact:
+        dns:
+          server: idm05.lab.msp.redhat.com
+          password: "{{ dns_password }}"
+          records: "{{ custom_dns_records }}"  
+  roles:
+    - jjaswanson4.utilities.idm_dns_records  
