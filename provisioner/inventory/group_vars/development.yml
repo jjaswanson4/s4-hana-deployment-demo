@@ -1,0 +1,32 @@
+---
+
+lifecycle_environment: development
+
+sap_hana_deployment_hana_sid: "DS4"
+sap_hana_hsr_hana_sid: "DS4"
+sap_hana_hsr_hana_primary_hostname: "sapddhdb1"
+sap_hana_hsr_full_primary_hostname: "sapddhdb1.josh.lab.msp.redhat.com"
+sap_hana_hsr_full_secondary_hostname: "sapddhdb2.josh.lab.msp.redhat.com"
+
+sap_hana_ha_pacemaker_hana_sid: DS4
+sap_hana_ha_pacemaker_hana_instance_number: "00"
+sap_hana_ha_pacemaker_vip: 10.15.120.42
+sap_hana_ha_pacemaker_hacluster_password: "R3dh4t123!"
+sap_hana_ha_pacemaker_node1_fqdn: sapddhdb1.josh.lab.msp.redhat.com
+sap_hana_ha_pacemaker_node2_fqdn: sapddhdb2.josh.lab.msp.redhat.com
+sap_hana_ha_pacemaker_node1_ip: 10.15.120.40
+sap_hana_ha_pacemaker_node2_ip: 10.15.120.41
+
+sap_s4hana_deployment_sid: "DS4"
+sap_s4hana_deployment_db_host: "sapddhdb.josh.lab.msp.redhat.com"
+sap_s4hana_deployment_db_sid: "DS4"
+
+hana_vip:
+  - name: "{{ sap_s4hana_deployment_db_host.split('.')[0] }}"
+    zone: josh.lab.msp.redhat.com
+    type: A
+    value: "{{ sap_hana_ha_pacemaker_vip }}"
+  - name: "{{ sap_hana_ha_pacemaker_vip.split('.')[-1] }}"
+    zone: "{{ sap_hana_ha_pacemaker_vip.split('.')[2] }}.15.10.in-addr.arpa."
+    type: PTR
+    value: "{{ sap_s4hana_deployment_db_host }}."
