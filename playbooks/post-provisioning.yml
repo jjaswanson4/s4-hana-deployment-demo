@@ -1,0 +1,10 @@
+---
+
+- name: run post-provisioning configuration
+  hosts:
+    - all
+  roles:
+    - jjaswanson4.utilities.stop_networkmanager_dns
+    - jjaswanson4.utilities.common_config
+    - redhat.rhel_system_roles.selinux
+    - redhat.rhel_system_roles.timesync
