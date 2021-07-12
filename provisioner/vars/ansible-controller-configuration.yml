@@ -27,11 +27,6 @@ tower_credentials:
       url: https://automationhub01.lab.msp.redhat.com/api/galaxy/content/community/
       token: "{{ automation_hub_token }}"
     update_secrets: no
-  - name: Ansible Galaxy
-    credential_type: Ansible Galaxy/Automation Hub API Token
-    organization: Default
-    inputs:
-      url: https://galaxy.ansible.com/
 
 tower_organizations:
   - name: SAP S4 HANA Deployment Demo
@@ -139,23 +134,27 @@ tower_templates:
     playbook: playbooks/infrastructure/manage-nfs-shares.yml
     credentials:
       - SAP Systems Root Account
+  - name: Manage NFS Shares
+    inventory: SAP S4 HANA Deployment Demo
+    project: SAP S4 HANA Deployment Demo
+    playbook: playbooks/infrastructure/manage-dns-records.yml
   # BASIS (Application Team) Job Templates
   - name: SAP Preconfigure Tasks
     inventory: SAP S4 HANA Deployment Demo
     project: SAP S4 HANA Deployment Demo
-    playbook: playbooks/infrastructure/sap-preconfigure.yml
+    playbook: playbooks/basis/sap-preconfigure.yml
     credentials:
       - SAP Systems Root Account
   - name: Netweaver Preconfigure Tasks
     inventory: SAP S4 HANA Deployment Demo
     project: SAP S4 HANA Deployment Demo
-    playbook: playbooks/infrastructure/netweaver-preconfigure.yml
+    playbook: playbooks/basis/netweaver-preconfigure.yml
     credentials:
       - SAP Systems Root Account
   - name: HANA Preconfigure Tasks
     inventory: SAP S4 HANA Deployment Demo
     project: SAP S4 HANA Deployment Demo
-    playbook: playbooks/infrastructure/hana-preconfigure.yml
+    playbook: playbooks/basis/hana-preconfigure.yml
     credentials:
       - SAP Systems Root Account
 
@@ -195,7 +194,7 @@ tower_workflows:
         success_nodes:
           - node204
       - unified_job_template: SAP Preconfigure Tasks
-        idetifier: node204
+        identifier: node204
         success_nodes:
           - node205
           - node206
@@ -247,7 +246,7 @@ tower_rbac:
   - team: Infrastructure
     role: admin
     workflow: Provision Infrastructure
-  # BASIS (Application Team) Permissions
+  # BASIS (Application Team) Permissions for Infrastructure Automation
   - team: BASIS (Application Team)
     role: read
     inventory: SAP S4 HANA Deployment Demo
@@ -259,8 +258,20 @@ tower_rbac:
     job_template: Manage NFS Shares
   - team: BASIS (Application Team)
     role: execute
+    job_template: Manage DNS Records
+  - team: BASIS (Application Team)
+    role: execute
     job_template: Manage Local Storage
   - team: BASIS (Application Team)
     role: execute
     workflow: Provision Infrastructure
-  
+  # BASIS (Application Team) Permissions
+  - team: BASIS (Application Team)
+    role: admin
+    job_template: SAP Preconfigure Tasks
+  - team: BASIS (Application Team)
+    role: admin
+    job_template: Netweaver Preconfigure Tasks
+  - team: BASIS (Application Team)
+    role: admin
+    job_template: HANA Preconfigure Tasks    
