@@ -70,19 +70,31 @@ tower_templates:
   - name: Pre-Provisioning Tasks
     inventory: SAP S4 HANA Deployment Demo
     project: SAP S4 HANA Deployment Demo
-    playbook: playbooks/pre-provisioning.yml
+    playbook: playbooks/infrastructure/pre-provisioning.yml
   - name: Provision Tasks
     inventory: SAP S4 HANA Deployment Demo
     project: SAP S4 HANA Deployment Demo
-    playbook: playbooks/pre-provisioning.yml
+    playbook: playbooks/infrastructure/pre-provisioning.yml
     credentials:
       - root
   - name: Post-Provisioning Tasks
     inventory: SAP S4 HANA Deployment Demo
     project: SAP S4 HANA Deployment Demo
-    playbook: playbooks/pre-provisioning.yml
+    playbook: playbooks/infrastructure/pre-provisioning.yml
     credentials:
       - root
+  - name: Manage Local Storage
+    inventory: SAP S4 HANA Deployment Demo
+    project: SAP S4 HANA Deployment Demo
+    playbook: playbooks/infrastructure/manage-local-storage.yml
+    credentials:
+      - root
+  - name: Post-Provisioning Tasks
+    inventory: SAP S4 HANA Deployment Demo
+    project: SAP S4 HANA Deployment Demo
+    playbook: playbooks/infrastructure/mount-nfs-shares.yml
+    credentials:
+      - root      
 
 tower_workflows:
   # Infrastructure Team Workflows
