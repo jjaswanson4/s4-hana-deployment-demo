@@ -1,0 +1,31 @@
+---
+
+os: rhel8.2
+htop_url: https://dl.fedoraproject.org/pub/epel/8/Everything/x86_64/Packages/h/htop-3.0.5-1.el8.x86_64.rpm
+application: sap
+
+provisioning:
+  satellite:
+    server: satellite06.lab.msp.redhat.com
+    username: admin
+    password: "{{ satellite_password }}"
+  host_group: "{{ os }}"
+  organization: MSP Lab
+  location: MSP Lab
+  method: bootdisk
+  dns_domain: josh.lab.msp.redhat.com
+  cpus: "{{ cpus }}"
+  memory_mb: "{{ memory_mb }}"
+  activation_keys: "ak-{{ application }}-{{ os }}-{{ lifecycle_environment }}"
+
+nfs_shares:
+  - src: 10.15.108.14:/mnt/data01/sap
+    path: /software
+
+sap_preconfigure_modify_etc_hosts: yes
+sap_domain: "josh.lab.msp.redhat.com"
+sap_hostagent_installation_type: "rpm"
+sap_hostagent_rpm_remote_path: "/software/SAPHOSTAGENT"
+sap_hostagent_rpm_file_name: "saphostagentrpm_44-20009394.rpm"
+sap_preconfigure_fail_if_reboot_required: no
+sap_preconfigure_selinux_state: permissive
