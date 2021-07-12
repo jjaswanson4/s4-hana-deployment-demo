@@ -1,0 +1,130 @@
+---
+
+tower_hostname: tower06.lab.msp.redhat.com
+tower_validate_certs: no
+tower_username: admin
+tower_password: "{{ ansible_password }}"
+
+tower_credentials:
+  - name: root
+    credential_type: Machine
+    organization: Default
+    inputs:
+      username: root
+      password: "{{ ansible_password }}"
+    update_secrets: no
+  - name: MSP Lab Automation Hub - RH Certified
+    credential_type: Ansible Galaxy/Automation Hub API Token
+    organization: Default
+    inputs:
+      url: https://automationhub01.lab.msp.redhat.com/api/galaxy/content/rh-certified/
+      token: "{{ automation_hub_token }}"
+    update_secrets: no
+  - name: MSP Lab Automation Hub - Community
+    credential_type: Ansible Galaxy/Automation Hub API Token
+    organization: Default
+    inputs:
+      url: https://automationhub01.lab.msp.redhat.com/api/galaxy/content/community/
+      token: "{{ automation_hub_token }}"
+    update_secrets: no
+
+tower_organizations:
+  - name: SAP S4 HANA Deployment Demo
+    galaxy_credentials:
+    - MSP Lab Automation Hub - RH Certified
+    - MSP Lab Automation Hub - Community
+
+tower_teams:
+  - name: BASIS (Application Team)
+    description: SAP BASIS application team
+    organization: SAP S4 HANA Deployment Demo
+  - name: Infrastructure
+    description: Infrastructure team
+    organization: SAP S4 HANA Deployment Demo
+
+tower_user_accounts:
+  - username: basis_user
+    password: "{{ ansible_password }}"
+    email: dont@email.me
+    update_secrets: no
+  - username: infrastructure_user
+    password: "{{ ansible_password }}"
+    email: dont@email.me
+    update_secrets: no
+
+tower_projects:
+  - name: SAP S4 HANA Deployment Demo
+    organization: SAP S4 HANA Deployment Demo
+    scm_branch: main
+    scm_type: git
+    scm_url: https://github.com/jjaswanson4/s4-hana-deployment-demo.git
+    wait: yes
+
+tower_inventories:
+  - name: SAP S4 HANA Deployment Demo
+    organization: SAP S4 HANA Deployment Demo
+    variables: "{{ lookup('file', 'inventory/group_vars/all.yml') | from_yaml }}"
+
+tower_templates:
+  # Infrastructure Team Automation
+  - name: Pre-Provisioning Tasks
+    inventory: SAP S4 HANA Deployment Demo
+    project: SAP S4 HANA Deployment Demo
+    playbook: playbooks/pre-provisioning.yml
+  - name: Provision Tasks
+    inventory: SAP S4 HANA Deployment Demo
+    project: SAP S4 HANA Deployment Demo
+    playbook: playbooks/pre-provisioning.yml
+    credentials:
+      - root
+  - name: Post-Provisioning Tasks
+    inventory: SAP S4 HANA Deployment Demo
+    project: SAP S4 HANA Deployment Demo
+    playbook: playbooks/pre-provisioning.yml
+    credentials:
+      - root
+
+tower_workflows:
+  # Infrastructure Team Workflows
+  - name: Provision Infrastructure
+    inventory: SAP S4 HANA Deployment Demo
+    organization: SAP S4 HANA Deployment Demo
+    simplified_workflow_nodes:
+      - unified_job_template: Pre-Provisioning Tasks
+        identifier: node101
+        success_nodes:
+          - node102
+      - unified_job_template: Provision Tasks
+        identifier: node102
+        success_nodes:
+          - node103
+      - unified_job_template: Post-Provisioning Tasks
+        identifier: node103
+
+tower_rbac:
+  - user: basis_user
+    target_team: BASIS (Application Team)
+    organization: SAP S4 HANA Deployment Demo
+    role: member
+  - user: infrastructure_user
+    target_team: Infrastructure
+    organization: SAP S4 HANA Deployment Demo
+    role: member
+  - team: Infrastructure
+    role: admin
+    inventory: SAP S4 HANA Deployment Demo
+  - team: Infrastructure
+    role: admin
+    project: SAP S4 HANA Deployment Demo
+  - team: Infrastructure
+    role: admin
+    job_template: Pre-Provisioning Tasks
+  - team: Infrastructure
+    role: admin
+    job_template: Provision Tasks
+  - team: Infrastructure
+    role: admin
+    job_template: Post-Provisioning Tasks
+  - team: Infrastructure
+    role: admin
+    workflow: Provision Infrastructure
