@@ -1,0 +1,8 @@
+---
+
+- name: run sap preconfigure roles and install the SAP hostagent
+  hosts:
+    - all
+  roles:
+    - sap-preconfigure
+    - redhat_sap.sap_hostagent
