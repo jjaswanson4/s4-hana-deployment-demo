@@ -6,9 +6,9 @@ tower_username: admin
 tower_password: "{{ ansible_password }}"
 
 tower_credentials:
-  - name: root
+  - name: SAP Systems Root Account
     credential_type: Machine
-    organization: Default
+    organization: SAP S4 HANA Deployment Demo
     inputs:
       username: root
       password: "{{ ansible_password }}"
@@ -76,25 +76,25 @@ tower_templates:
     project: SAP S4 HANA Deployment Demo
     playbook: playbooks/infrastructure/pre-provisioning.yml
     credentials:
-      - root
+      - SAP Systems Root Account
   - name: Post-Provisioning Tasks
     inventory: SAP S4 HANA Deployment Demo
     project: SAP S4 HANA Deployment Demo
     playbook: playbooks/infrastructure/pre-provisioning.yml
     credentials:
-      - root
+      - SAP Systems Root Account
   - name: Manage Local Storage
     inventory: SAP S4 HANA Deployment Demo
     project: SAP S4 HANA Deployment Demo
     playbook: playbooks/infrastructure/manage-local-storage.yml
     credentials:
-      - root
-  - name: Post-Provisioning Tasks
+      - SAP Systems Root Account
+  - name: Manage NFS Shares
     inventory: SAP S4 HANA Deployment Demo
     project: SAP S4 HANA Deployment Demo
-    playbook: playbooks/infrastructure/mount-nfs-shares.yml
+    playbook: playbooks/infrastructure/manage-nfs-shares.yml
     credentials:
-      - root      
+      - SAP Systems Root Account     
 
 tower_workflows:
   # Infrastructure Team Workflows
@@ -124,6 +124,9 @@ tower_rbac:
     organization: SAP S4 HANA Deployment Demo
     role: member
   # Infrastructure Team Permissions
+  - team: Infrastructure
+    role: admin
+    credential: SAP Systems Root Account
   - team: Infrastructure
     role: admin
     inventory: SAP S4 HANA Deployment Demo
