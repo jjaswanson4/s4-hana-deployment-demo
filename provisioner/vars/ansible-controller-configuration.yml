@@ -27,12 +27,18 @@ tower_credentials:
       url: https://automationhub01.lab.msp.redhat.com/api/galaxy/content/community/
       token: "{{ automation_hub_token }}"
     update_secrets: no
+  - name: Ansible Galaxy
+    credential_type: Ansible Galaxy/Automation Hub API Token
+    organization: Default
+    inputs:
+      url: https://galaxy.ansible.com/
 
 tower_organizations:
   - name: SAP S4 HANA Deployment Demo
     galaxy_credentials:
     - MSP Lab Automation Hub - RH Certified
     - MSP Lab Automation Hub - Community
+    - Ansible Galaxy
 
 tower_teams:
   - name: BASIS (Application Team)
@@ -112,13 +118,13 @@ tower_templates:
   - name: Provision Tasks
     inventory: SAP S4 HANA Deployment Demo
     project: SAP S4 HANA Deployment Demo
-    playbook: playbooks/infrastructure/pre-provisioning.yml
+    playbook: playbooks/infrastructure/provision-infrastructure.yml
     credentials:
       - SAP Systems Root Account
   - name: Post-Provisioning Tasks
     inventory: SAP S4 HANA Deployment Demo
     project: SAP S4 HANA Deployment Demo
-    playbook: playbooks/infrastructure/pre-provisioning.yml
+    playbook: playbooks/infrastructure/post-provisioning.yml
     credentials:
       - SAP Systems Root Account
   - name: Manage Local Storage
@@ -137,9 +143,21 @@ tower_templates:
   - name: SAP Preconfigure Tasks
     inventory: SAP S4 HANA Deployment Demo
     project: SAP S4 HANA Deployment Demo
-    playbook: playbooks/infrastructure/manage-nfs-shares.yml
+    playbook: playbooks/infrastructure/sap-preconfigure.yml
     credentials:
-      - SAP Systems Root Account 
+      - SAP Systems Root Account
+  - name: Netweaver Preconfigure Tasks
+    inventory: SAP S4 HANA Deployment Demo
+    project: SAP S4 HANA Deployment Demo
+    playbook: playbooks/infrastructure/netweaver-preconfigure.yml
+    credentials:
+      - SAP Systems Root Account
+  - name: HANA Preconfigure Tasks
+    inventory: SAP S4 HANA Deployment Demo
+    project: SAP S4 HANA Deployment Demo
+    playbook: playbooks/infrastructure/hana-preconfigure.yml
+    credentials:
+      - SAP Systems Root Account
 
 tower_workflows:
   # Infrastructure Team Workflows
@@ -158,6 +176,38 @@ tower_workflows:
           - node103
       - unified_job_template: Post-Provisioning Tasks
         identifier: node103
+  # BASIS (Application Team) Workflows
+  - name: Install SAP S4 HANA Stack
+    inventory: SAP S4 HANA Deployment Demo
+    organization: SAP S4 HANA Deployment Demo
+    extra_vars: "{{ lookup('file', 'extra-vars.yml') | from_yaml }}"
+    simplified_workflow_nodes:
+      - unified_job_template: Provision Infrastructure
+        identifier: node201
+        success_nodes:
+          - node202
+      - unified_job_template: Manage Local Storage
+        identifier: node202
+        success_nodes:
+          - node203
+      - unified_job_template: Manage NFS Shares
+        identifier: node203
+        success_nodes:
+          - node204
+      - unified_job_template: SAP Preconfigure Tasks
+        idetifier: node204
+        success_nodes:
+          - node205
+          - node206
+      - name: Netweaver Preconfigure Tasks
+        identifier: node205
+        success_nodes:
+          - node207
+      - name: HANA Preconfigure Tasks
+        identifier: node206
+        success_nodes:
+          - node207
+
 
 tower_rbac:
   # Team Membership
