@@ -1,0 +1,56 @@
+---
+
+- name: remove appropriate configurations from Ansible Controller
+  hosts:
+    - localhost
+  gather_facts: no
+  vars_files:
+    - vars/ansible-controller-configuration.yml
+  pre_tasks:
+    - name: gather up workflows to remove
+      ansible.builtin.set_fact:
+        tower_workflows_to_remove: "{{ tower_workflows_to_remove | default([]) + [ {'name': item.name, 'state': 'absent'} ] }}"
+      loop: "{{ tower_workflows }}"
+    - name: gather up job templates to remove
+      ansible.builtin.set_fact:
+        tower_templates_to_remove: "{{ tower_templates_to_remove | default([]) + [ {'name': item.name, 'state': 'absent'} ] }}"
+      loop: "{{ tower_templates }}"
+    - name: gather up inventories to remove
+      ansible.builtin.set_fact:
+        tower_inventories_to_remove: "{{ tower_inventories_to_remove | default([]) + [ {'name': item.name, 'organization': item.organization, 'state': 'absent'} ] }}"
+      loop: "{{ tower_inventories }}"
+    - name: gather up projects to remove
+      ansible.builtin.set_fact:
+        tower_projects_to_remove: "{{ tower_projects_to_remove | default([]) + [ {'name': item.name, 'organization': item.organization, 'state': 'absent'} ] }}"
+      loop: "{{ tower_projects }}"
+    - name: gather up teams to remove
+      ansible.builtin.set_fact:
+        tower_teams_to_remove: "{{ tower_teams_to_remove | default([]) + [ {'name': item.name, 'organization': item.organization, 'state': 'absent'} ] }}"
+      loop: "{{ tower_teams }}"
+    - name: gather up users to remove
+      ansible.builtin.set_fact:
+        tower_user_accounts_to_remove: "{{ tower_user_accounts_to_remove | default([]) + [ {'username': item.username, 'state': 'absent'} ] }}"
+      loop: "{{ tower_user_accounts }}"
+    - name: gather up organizations to remove
+      ansible.builtin.set_fact:
+        tower_organizations_to_remove: "{{ tower_organizations_to_remove | default([]) + [ {'name': item.name, 'state': 'absent'} ] }}"
+      loop: "{{ tower_organizations }}"
+    - name: overwrite vars
+      ansible.builtin.set_fact:
+        tower_workflows: "{{ tower_workflows_to_remove }}"
+        tower_templates: "{{ tower_templates_to_remove }}"
+        tower_inventories: "{{ tower_inventories_to_remove }}"
+        tower_projects: "{{ tower_projects_to_remove }}"
+        tower_teams: "{{ tower_teams_to_remove }}"
+        tower_user_accounts: "{{ tower_user_accounts_to_remove }}"
+        tower_organizations: "{{ tower_organizations_to_remove }}"
+ 
+  roles:
+    - redhat_cop.tower_configuration.workflow_job_templates
+    - redhat_cop.tower_configuration.job_templates
+    - redhat_cop.tower_configuration.inventories
+    - redhat_cop.tower_configuration.projects
+    - redhat_cop.tower_configuration.teams
+    - redhat_cop.tower_configuration.users
+    - redhat_cop.tower_configuration.credentials
+    - redhat_cop.tower_configuration.organizations
