@@ -1,6 +1,6 @@
 ---
 
-- name: install SAP HANA and setup HSR
+- name: install SAP HANA
   hosts:
     - all
   roles:
