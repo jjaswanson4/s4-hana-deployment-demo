@@ -6,7 +6,7 @@ roles:
   - src: https://github.com/linux-system-roles/sap-netweaver-preconfigure.git
   - src: redhat_sap.sap_hostagent
   - src: redhat_sap.sap_hana_deployment
-  - src: redhat_sap.sap_hana_hsr
+  - src: https://github.com/redhat-sap/sap-hana-hsr.git
     version: 'tower'
   - src: redhat_sap.sap_hana_ha_pacemaker
   - src: redhat_sap.sap_s4hana_deployment
