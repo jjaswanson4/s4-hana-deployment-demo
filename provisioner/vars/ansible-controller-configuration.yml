@@ -241,11 +241,11 @@ tower_workflows:
         success_nodes:
           - node209
       - unified_job_template: Setup HSR
-        identifier: node210
+        identifier: node209
         success_nodes:
-          - node211
+          - node210
       - unified_job_template: Install S4
-        identifier: node211
+        identifier: node210
 
 
 tower_rbac:
