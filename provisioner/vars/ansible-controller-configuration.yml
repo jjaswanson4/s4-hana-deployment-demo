@@ -159,6 +159,28 @@ tower_templates:
     limit: hana
     credentials:
       - SAP Systems Root Account
+  - name: Install HANA
+    inventory: SAP S4 HANA Deployment Demo
+    project: SAP S4 HANA Deployment Demo
+    playbook: playbooks/basis/hana-install.yml
+    limit: hana
+    credentials:
+      - SAP Systems Root Account
+  - name: Setup HSR
+    inventory: SAP S4 HANA Deployment Demo
+    project: SAP S4 HANA Deployment Demo
+    playbook: playbooks/basis/hsr-setup.yml
+    limit: hana
+    credentials:
+      - SAP Systems Root Account
+  - name: Install S4
+    inventory: SAP S4 HANA Deployment Demo
+    project: SAP S4 HANA Deployment Demo
+    playbook: playbooks/basis/s4-install.yml
+    limit: s4
+    credentials:
+      - SAP Systems Root Account
+
 
 tower_workflows:
   # Infrastructure Team Workflows
@@ -203,14 +225,27 @@ tower_workflows:
           - node207
       - unified_job_template: Netweaver Preconfigure Tasks
         identifier: node205
-        #success_nodes:
-        #  - node207
+        success_nodes:
+          - node208
       - unified_job_template: HANA Preconfigure Tasks
         identifier: node206
-        #success_nodes:
-        #  - node207
+        success_nodes:
+          - node208
       - unified_job_template: Manage DNS Records
         identifier: node207
+        success_nodes:
+          - node208
+      - unified_job_template: Install HANA
+        identifier: node208
+        all_parents_must_converge: yes
+        success_nodes:
+          - node209
+      - unified_job_template: Setup HSR
+        identifier: node210
+        success_nodes:
+          - node211
+      - unified_job_template: Install S4
+        identifier: node211
 
 
 tower_rbac:
@@ -279,4 +314,13 @@ tower_rbac:
     job_template: Netweaver Preconfigure Tasks
   - team: BASIS (Application Team)
     role: admin
-    job_template: HANA Preconfigure Tasks    
+    job_template: HANA Preconfigure Tasks
+  - team: BASIS (Application Team)
+    role: admin
+    job_template: Install HANA
+  - team: BASIS (Application Team)
+    role: admin
+    job_template: Setup HSR
+  - team: BASIS (Application Team)
+    role: admin
+    job_template: Install S4
