@@ -7,5 +7,6 @@ roles:
   - src: redhat_sap.sap_hostagent
   - src: redhat_sap.sap_hana_deployment
   - src: redhat_sap.sap_hana_hsr
+    version: 'tower'
   - src: redhat_sap.sap_hana_ha_pacemaker
   - src: redhat_sap.sap_s4hana_deployment
