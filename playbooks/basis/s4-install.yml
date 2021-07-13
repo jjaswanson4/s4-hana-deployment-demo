@@ -1,0 +1,7 @@
+---
+
+- name: install s4 app server
+  hosts:
+    - all
+  roles:
+    - redhat_sap.sap_s4hana_deployment
