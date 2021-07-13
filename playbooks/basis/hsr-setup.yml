@@ -4,5 +4,5 @@
   hosts:
     - all
   roles:
-    - sap_hana_hsr
+    - sap-hana-hsr
     - redhat_sap.sap_hana_ha_pacemaker
