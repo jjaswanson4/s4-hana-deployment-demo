@@ -1,0 +1,31 @@
+---
+
+- name: delete deployed systems
+  hosts:
+    - all
+  gather_facts: false
+  tasks:
+    - name: delete systems from satellite
+      redhat.satellite.host:
+        username: "{{ provisioning.satellite.username }}"
+        password: "{{ provisioning.satellite.password }}"
+        server_url: "https://{{ provisioning.satellite.server | mandatory }}"
+        validate_certs: "{{ provisioning.validate_certs | default('false') }}"
+        name: "{{ inventory_hostname }}"
+        state: absent
+      delegate_to: localhost
+    - name: delete DNS records
+      community.general.ipa_dnsrecord:
+        ipa_host: "{{ dns.server | mandatory }}"
+        ipa_pass: "{{ dns.password | mandatory }}"
+        validate_certs: "{{ dns.validate_certs | default('false') }}"
+        zone_name: "{{ record.zone | mandatory }}"
+        record_name: "{{ record.name | mandatory }}"
+        record_value: "{{ record.value | mandatory }}"
+        record_type: "{{ record.type | mandatory }}"
+        state: absent
+      loop_control:
+        loop_var: record
+      loop: "{{ dns.records + custom_dns_records }}"
+      delegate_to: "{{ delegate_host | default('localhost') }}"
+      throttle: 1
