@@ -1,0 +1,7 @@
+---
+
+- name: install SAP HANA and setup HSR
+  hosts:
+    - all
+  roles:
+    - redhat_sap.sap_hana_deployment
