@@ -1,0 +1,8 @@
+---
+
+- name: Setup HSR between HANA servers
+  hosts:
+    - all
+  roles:
+    - redhat_sap.sap_hana_hsr
+    - redhat_sap.sap_hana_ha_pacemaker
