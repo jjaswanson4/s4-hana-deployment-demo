@@ -2,3 +2,6 @@
 
 ansible_host: 10.15.120.40
 ip_address: "{{ ansible_host }}"
+
+sap_hana_hsr_role: primary
+sap_hana_hsr_alias: DC1
