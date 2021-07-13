@@ -85,11 +85,21 @@ tower_hosts:
     variables: "{{ lookup('file', 'inventory/host_vars/sapddhdb2.josh.lab.msp.redhat.com.yml') | from_yaml }}"
 
 tower_groups:
-  - name: hana
+  - name: primary
     inventory: SAP S4 HANA Deployment Demo
     hosts:
       - sapddhdb1.josh.lab.msp.redhat.com
+    variables: "{{ lookup('file', 'inventory/group_vars/primary.yml') | from_yaml }}"
+  - name: secondary
+    inventory: SAP S4 HANA Deployment Demo
+    hosts:
       - sapddhdb2.josh.lab.msp.redhat.com
+    variables: "{{ lookup('file', 'inventory/group_vars/secondary.yml') | from_yaml }}" 
+  - name: hana
+    inventory: SAP S4 HANA Deployment Demo
+    children:
+      - primary
+      - secondary
     variables: "{{ lookup('file', 'inventory/group_vars/hana.yml') | from_yaml }}"
   - name: s4
     inventory: SAP S4 HANA Deployment Demo
@@ -187,7 +197,13 @@ tower_templates:
     limit: s4
     credentials:
       - SAP Systems Root Account
-
+  - name: Reinstate HSR
+    inventory: SAP S4 HANA Deployment Demo
+    project: SAP S4 HANA Deployment Demo
+    playbook: playbooks/basis/reinstate-hsr.yml
+    limit: 'hana:&primary'
+    credentials:
+      - SAP Systems Root Account
 
 tower_workflows:
   # Infrastructure Team Workflows
@@ -195,6 +211,7 @@ tower_workflows:
     inventory: SAP S4 HANA Deployment Demo
     organization: SAP S4 HANA Deployment Demo
     extra_vars: "{{ lookup('file', 'extra-vars.yml') | from_yaml }}"
+    state: "{{ resource_state | default('present') }}"
     simplified_workflow_nodes:
       - unified_job_template: Pre-Provisioning Tasks
         identifier: node101
@@ -211,11 +228,13 @@ tower_workflows:
     inventory: SAP S4 HANA Deployment Demo
     organization: SAP S4 HANA Deployment Demo
     extra_vars: "{{ lookup('file', 'extra-vars.yml') | from_yaml }}"
+    state: "{{ resource_state | default('present') }}"
     simplified_workflow_nodes:
       - unified_job_template: Provision Infrastructure
         identifier: node201
         success_nodes:
           - node202
+        state: "{{ resource_state | default('present') }}"
       - unified_job_template: Manage Local Storage
         identifier: node202
         success_nodes:
@@ -253,7 +272,10 @@ tower_workflows:
           - node210
       - unified_job_template: Install S4
         identifier: node210
-
+        success_nodes:
+          - node211
+      - unified_job_template: Reinstate HSR
+        identifier: node211
 
 tower_rbac:
   # Team Membership
@@ -335,6 +357,9 @@ tower_rbac:
   - team: BASIS (Application Team)
     role: admin
     job_template: Install S4
+  - team: BASIS (Application Team)
+    role: admin
+    job_template: Reinstate HSR
   - team: BASIS (Application Team)
     role: admin
     workflow: Install SAP S4 HANA Stack
