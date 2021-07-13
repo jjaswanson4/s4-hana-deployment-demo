@@ -42,6 +42,9 @@ tower_teams:
   - name: Infrastructure
     description: Infrastructure team
     organization: SAP S4 HANA Deployment Demo
+  - name: SAP Business Analyst Team
+    description: End consumers of SAP systems
+    organization: SAP S4 HANA Deployment Demo
 
 tower_user_accounts:
   - username: basis_user
@@ -52,6 +55,10 @@ tower_user_accounts:
     password: "{{ ansible_password }}"
     email: dont@email.me
     update_secrets: no
+  - username: business_analyst
+    password: "{{ ansible_password }}"
+    email: dont@email.me
+    update_secrets: no    
 
 tower_projects:
   - name: SAP S4 HANA Deployment Demo
@@ -258,6 +265,10 @@ tower_rbac:
     target_team: Infrastructure
     organization: SAP S4 HANA Deployment Demo
     role: member
+  - user: business_analyst
+    target_team: SAP Business Analyst Team
+    organization: SAP S4 HANA Deployment Demo
+    role: member   
   # Infrastructure Team Permissions
   - team: Infrastructure
     role: admin
@@ -324,3 +335,10 @@ tower_rbac:
   - team: BASIS (Application Team)
     role: admin
     job_template: Install S4
+  - team: BASIS (Application Team)
+    role: admin
+    workflow: Install SAP S4 HANA Stack
+  # SAP Business Analyst Team Permissions from BASIS
+  - team: SAP Business Analyst Team
+    role: execute
+    workflow: Install SAP S4 HANA Stack
