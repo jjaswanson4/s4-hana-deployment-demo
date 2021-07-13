@@ -9,7 +9,7 @@
       ansible.builtin.set_fact:
         dns:
           server: idm05.lab.msp.redhat.com
-          password: "{{ dns_password }}"
+          password: "{{ dns_pass }}"
           records: "{{ custom_dns_records }}"  
   roles:
     - jjaswanson4.utilities.idm_dns_records  
