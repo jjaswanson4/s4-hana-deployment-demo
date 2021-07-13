@@ -134,7 +134,7 @@ tower_templates:
     playbook: playbooks/infrastructure/manage-nfs-shares.yml
     credentials:
       - SAP Systems Root Account
-  - name: Manage NFS Shares
+  - name: Manage DNS Records
     inventory: SAP S4 HANA Deployment Demo
     project: SAP S4 HANA Deployment Demo
     playbook: playbooks/infrastructure/manage-dns-records.yml
@@ -149,12 +149,14 @@ tower_templates:
     inventory: SAP S4 HANA Deployment Demo
     project: SAP S4 HANA Deployment Demo
     playbook: playbooks/basis/netweaver-preconfigure.yml
+    limit: s4
     credentials:
       - SAP Systems Root Account
   - name: HANA Preconfigure Tasks
     inventory: SAP S4 HANA Deployment Demo
     project: SAP S4 HANA Deployment Demo
     playbook: playbooks/basis/hana-preconfigure.yml
+    limit: hana
     credentials:
       - SAP Systems Root Account
 
@@ -198,14 +200,17 @@ tower_workflows:
         success_nodes:
           - node205
           - node206
-      - name: Netweaver Preconfigure Tasks
+          - node207
+      - unified_job_template: Netweaver Preconfigure Tasks
         identifier: node205
-        success_nodes:
-          - node207
-      - name: HANA Preconfigure Tasks
+        #success_nodes:
+        #  - node207
+      - unified_job_template: HANA Preconfigure Tasks
         identifier: node206
-        success_nodes:
-          - node207
+        #success_nodes:
+        #  - node207
+      - unified_job_template: Manage DNS Records
+        identifier: node207
 
 
 tower_rbac:
