@@ -5,9 +5,9 @@
     - all
   tasks:
     - name: set persistence to normal mode
-      shell: >
-        source /usr/sap/RHE/home/.sapenv.sh &&
-        /usr/sap/{{ sap_hana_deployment_hana_sid }}/HDB{{ sap_hana_deployment_hana_instance_number }}/exe/hdbsql
+      ansible.builtin.shell: >
+        source /usr/sap/{{ sap_hana_deployment_hana_sid | upper }}/home/.sapenv.sh &&
+        /usr/sap/{{ sap_hana_deployment_hana_sid | upper }}/HDB{{ sap_hana_deployment_hana_instance_number }}/exe/hdbsql
         -n {{ ansible_hostname }}
         -i {{ sap_hana_deployment_hana_instance_number }}
         -u SYSTEM
@@ -16,6 +16,15 @@
       become: yes
       become_user: "{{ sap_hana_deployment_hana_sid | lower }}adm"
       become_method: su
-      register: db_overwrite_cmd
-      when:
-        - sap_hana_hsr_role == 'primary'
+    - name: run initial backup on primary
+      ansible.builtin.shell: >
+        source /usr/sap/{{ sap_hana_deployment_hana_sid | upper }}/home/.sapenv.sh &&
+        /usr/sap/{{ sap_hana_deployment_hana_sid | upper }}/HDB{{ sap_hana_deployment_hana_instance_number }}/exe/hdbsql
+        -i {{ sap_hana_deployment_hana_instance_number }}
+        -u SYSTEM
+        -p {{ sap_hana_deployment_hana_db_system_password }}
+        -d SYSTEMDB
+        "BACKUP DATA FOR {{ sap_hana_deployment_hana_sid | upper }} USING FILE ('data_bck')"
+      become: yes
+      become_user: "{{ sap_hana_deployment_hana_sid | lower }}adm"
+      become_method: su
