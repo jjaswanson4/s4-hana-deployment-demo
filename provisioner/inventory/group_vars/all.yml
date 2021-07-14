@@ -1,7 +1,6 @@
 ---
 
 ansible_user: root
-ansible_become: false
 
 manage_lvm: no
 
