@@ -17,11 +17,11 @@ This demo is given through the lens of three different personas: an infrastructu
 9. Install SAP/S4
 10. Reinsate HSR
 
-The automation will be driven by Red Hat Ansible Tower, with Red Hat Satellite doing the provisioning and content management.
+The automation will be driven by Red Hat Ansible Controller, with Red Hat Satellite doing the provisioning and content management.
 
 ## Requirements
 - An instance of Red Hat Satellite with the appropriate content for SAP systems (RHEL8.2)
-- An instance of Red Hat Ansible Tower where resources can be set up
+- An instance of Red Hat Ansible Controller where resources can be set up
 
 ## Definitions
 In the SAP space, we have a few different terms that need to be defined. Note: not all of these are universally agreed upon, replace with what your organization prefers.
@@ -33,7 +33,7 @@ In the SAP space, we have a few different terms that need to be defined. Note: n
 ## The Power of Ansible's Inventory
 One of the main intentions of this demo is to highlight how powerful an ansible inventory can be, and how to integrate this with complex environments that need automation.
 
-For this demo, Ansible Tower will be our source of truth, with an inventory containing host_vars and group_vars used to deploy SAP components.
+For this demo, Ansible Controller will be our source of truth, with an inventory containing host_vars and group_vars used to deploy SAP components.
 
 ## How to Run
 Within the `provisoner` directory is a playbook for configuring Red Hat Ansible Controller, along with an example vars file. The playbooks run by Ansible Controller are located in the `playbooks` directory.
