@@ -1,9 +1,16 @@
 ---
 
-tower_hostname: tower06.lab.msp.redhat.com
+tower_hostname: automationcontroller-aap20-ansible-automation-platform.apps.ocp4.lab.msp.redhat.com
 tower_validate_certs: no
 tower_username: admin
-tower_password: "{{ ansible_password }}"
+
+tower_credential_types:
+  - name: SAP Systems Peripheral Credentials
+    description: Additional credentials for provisioning SAP systems
+    kind: cloud
+    injectors:
+      extra_vars: "{{ lookup('file', 'peripheral-vars.yml') | from_yaml }}"
+    update_secrets: no
 
 tower_credentials:
   - name: SAP Systems Root Account
@@ -27,6 +34,9 @@ tower_credentials:
       url: https://automationhub01.lab.msp.redhat.com/api/galaxy/content/community/
       token: "{{ automation_hub_token }}"
     update_secrets: no
+  - name: SAP Systems Peripheral Credentials
+    credential_type: SAP Systems Peripheral Credentials
+    organization: SAP S4 HANA Deployment Demo
 
 tower_organizations:
   - name: SAP S4 HANA Deployment Demo
@@ -127,11 +137,15 @@ tower_templates:
     inventory: SAP S4 HANA Deployment Demo
     project: SAP S4 HANA Deployment Demo
     playbook: playbooks/infrastructure/pre-provisioning.yml
+    credentials:
+      - SAP Systems Peripheral Credentials
+      - SAP Systems Root Account
   - name: Provision Tasks
     inventory: SAP S4 HANA Deployment Demo
     project: SAP S4 HANA Deployment Demo
     playbook: playbooks/infrastructure/provision-infrastructure.yml
     credentials:
+      - SAP Systems Peripheral Credentials
       - SAP Systems Root Account
   - name: Post-Provisioning Tasks
     inventory: SAP S4 HANA Deployment Demo
@@ -144,6 +158,7 @@ tower_templates:
     project: SAP S4 HANA Deployment Demo
     playbook: playbooks/infrastructure/manage-local-storage.yml
     credentials:
+      - SAP Systems Peripheral Credentials
       - SAP Systems Root Account
   - name: Manage NFS Shares
     inventory: SAP S4 HANA Deployment Demo
@@ -155,6 +170,9 @@ tower_templates:
     inventory: SAP S4 HANA Deployment Demo
     project: SAP S4 HANA Deployment Demo
     playbook: playbooks/infrastructure/manage-dns-records.yml
+    credentials:
+      - SAP Systems Peripheral Credentials
+      - SAP Systems Root Account
   # BASIS (Application Team) Job Templates
   - name: SAP Preconfigure Tasks
     inventory: SAP S4 HANA Deployment Demo
@@ -204,14 +222,20 @@ tower_templates:
     limit: 'hana:&primary'
     credentials:
       - SAP Systems Root Account
+  # Meta Job Templates
+  - name: Teardown SAP S4 HANA Demo Infrastructure
+    inventory: SAP S4 HANA Deployment Demo
+    project: SAP S4 HANA Deployment Demo
+    playbook: provisioner/teardown-demo-infrastructure.yml
+    credentials:
+      - SAP Systems Peripheral Credentials
+      - SAP Systems Root Account
 
 tower_workflows:
   # Infrastructure Team Workflows
   - name: Provision Infrastructure
     inventory: SAP S4 HANA Deployment Demo
     organization: SAP S4 HANA Deployment Demo
-    extra_vars: "{{ lookup('file', 'extra-vars.yml') | from_yaml }}"
-    state: "{{ resource_state | default('present') }}"
     simplified_workflow_nodes:
       - unified_job_template: Pre-Provisioning Tasks
         identifier: node101
@@ -227,7 +251,6 @@ tower_workflows:
   - name: Install SAP S4 HANA Stack
     inventory: SAP S4 HANA Deployment Demo
     organization: SAP S4 HANA Deployment Demo
-    extra_vars: "{{ lookup('file', 'extra-vars.yml') | from_yaml }}"
     state: "{{ resource_state | default('present') }}"
     simplified_workflow_nodes:
       - unified_job_template: Provision Infrastructure
